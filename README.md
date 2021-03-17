@@ -110,7 +110,7 @@ very coherent filling in of occluded regions." This might be the case because ou
 ![Occlusion_2](imgs/Occlusion_2.png)
 
 #### Visual Number Sense
-The test the trained model on a dataset with various number of objects. As shown by the two figures below, the model generalizes well to different number of objects. We also observed that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image.
+We test the trained model on a dataset with various number of objects. As shown by the two figures below, the model generalizes well to different number of objects. We also observed that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image.
 The aggregate number of activated masks can then be used to predict the number of objects within the image. However, in our experiment, this visual number sense is only based on color information, rather than more complicated features like shape and texture. This is epitomized by regions with the same color being clustered as a single object, even if they are spatially separated. One potential way to add spatial feature to the segmentation is by adding a spatial prior to the attention mask, which encourages the grouping of adjacent pixels.
 
 ![Number_1](imgs/Number_1.png)

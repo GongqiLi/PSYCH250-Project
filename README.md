@@ -86,36 +86,32 @@ Run the code step-by-step and view the visualization result from the link from t
 
 ## Test Results
 
-In the figures below, the first rows correspond to the raw image, the 2nd-5th row correspond to the four attention masks respectively, and the last row represent the reconstructed image. Each column corresponds to one sample.
+In the figures below, the first row corresponds to the raw image, the 2nd-5th row correspond to the four attention masks, respectively, and the last row represents the reconstructed image. Each column corresponds to one sample.
 
 #### Tracing the Learning Trajectory
-There are three stages of the training. In the first stage, the model first learns to distinguish between background and objects, the first attention mask always take care of the background, while the rest three masks failed to do object segmentation and the reconstruction is poor, which is indicated by a large VAE reconstruction loss.
+There are three stages of the training. In the first stage, the model first learns to distinguish between the background and the objects--the first attention mask always take care of the background--while the remaining three masks fail at object segmentation and the reconstruction is poor. This is indicated by a large VAE reconstruction loss.
 
 ![Stage_1](imgs/Stage_1.png)
 
-In the second stage, the second attention mask learned to capture one object, while the last attention mask always capture the rest two objects, while the mask in the middle doing nothing. Attention masks are always built up in such an order. The reconstruction is better than in stage 1, (note that as circle and square are captured together in the last mask, the reconstruction image has color a combination of red and green).
+In the second stage, the second attention mask learned to capture one object, while the last attention mask always captured the remaining two objects, and the mask in the middle did nothing. Attention masks are always built up in such an order. The reconstruction is better than in stage 1, (note that as circle and square are captured together in the last mask, the reconstruction image has color a combination of red and green).
 
 ![Stage_2](imgs/Stage_2.png)
 
-In the third stage, each mask learns to capture only one object, which display great object segmentation result. The reconstruction is perfect with colors and shapes matching the raw input.
+In the third stage, each mask learns to capture only one object, which displays great object segmentation result. The reconstruction is perfect with colors and shapes matching the raw input.
 
 ![Stage_3](imgs/Stage_3.png)
 
 #### Occlusion
-Below are two examples of raw images with occlusion. Occlusion does not affect the reconstruction performance with the model always allocates the overlapped part to one of the object. However, on our dataset, we did not observed what is proclaimed by the paper as "the unmasked reconstruction components of occluded objects showed
-very coherent filling in of occluded regions". This might because our dataset is 2D while the dataset used by them (CLEVR) is 3D.
+Below are two examples of raw images with occlusion. Occlusion does not affect the reconstruction performance, as the model always allocates the overlapped part to one of the objects. However, on our dataset, we did not observe, as proclaimed by the paper "the unmasked reconstruction components of occluded objects showed
+very coherent filling in of occluded regions." This might be the case because our dataset is 2D, while the dataset used by them (CLEVR) is 3D.
 
 ![Occlusion_1](imgs/Occlusion_1.png)
 
 ![Occlusion_2](imgs/Occlusion_2.png)
 
 #### Visual Number Sense
-The test the trained model on dataset with various number of objects. As shown by the two figure below, the model generalizes well to different number of objects.
-We also observe that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image.
-The aggregate number of activated masks can then be used to predict the number of objects within the image.
-However, in our experiment, this visual number sense is only based on color information, rather than more complicated features like shape and texture,
-regions with the same color are always clustered as one single object even if they are spatially separated. One potential way to add spatial feature to
-the segmentation is by adding a spatial prior to the attention mask which encourages the grouping of adjacent pixels.
+The test the trained model on a dataset with various number of objects. As shown by the two figures below, the model generalizes well to different number of objects. We also observed that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image.
+The aggregate number of activated masks can then be used to predict the number of objects within the image. However, in our experiment, this visual number sense is only based on color information, rather than more complicated features like shape and texture. This is epitomized by regions with the same color being clustered as a single object, even if they are spatially separated. One potential way to add spatial feature to the segmentation is by adding a spatial prior to the attention mask, which encourages the grouping of adjacent pixels.
 
 ![Number_1](imgs/Number_1.png)
 

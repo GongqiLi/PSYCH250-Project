@@ -1,0 +1,25 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="E741" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="target_network_raw_emg_enhanced" />
+          <option value="load_pre_training_dataset" />
+          <option value="load_evaluation_dataset" />
+          <option value="PyTorchImplementation.CWT.evaluate_wavelet_target_network.Wavelet_CNN_Target_Network" />
+          <option value="source_network_raw_emg_enhanced" />
+          <option value="list.set_xdata" />
+          <option value="list.set_ydata" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

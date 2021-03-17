@@ -19,33 +19,33 @@ In this scenario, the attention mask indicates which image components should be 
 
 While the original intent of this model was to test the notion that, by learning consistent representations shared between images, a neural network can perform better on visual reconstruction tasks, our intent is to examine whether this representation-learning paradigm translate into robust visual scene decomposition, i.e., the segmentation of visual input into individual objects. Object perception, the ability to perceive and represent individual objects, is a fundamental cognitive ability that allows human’s effective understanding of the world as perceived through visual senses, and we examined here if such signature of development is presented in MONet.  
 
-Furthermore, as object permanence and visual number sense are two key visual scene understanding properties originated from the skill of visual scene decomposition, we tested whether MONet display similar object permanence and visual number sense as humans. To be more specific, we ran two tests: the first one examined whether MONet has the ability to accurately infer objects in scenes with occlusion; the second one tested if MONet is able to segment objects into semantically meaningful slots with input images containing different number of objects. 
+Furthermore, as object permanence and visual number sense are two key visual scene understanding properties originated from the skill of visual scene decomposition, we tested whether MONet display similar object permanence and visual number sense as humans. To be more specific, we ran two tests: the first one examined whether MONet has the ability to accurately infer objects in scenes with occlusion; the second one tested if MONet is able to segment objects into semantically meaningful slots with input images containing different number of objects.
 
 
 ## Code Details
-The original design of MONet was conceived by Christopher P. Burgess, Loic Matthey, Nicholas Watters, Rishabh Kabra, Irina Higgins, Matt Botvinick, Alexander Lerchner (the paper can be found here: https://arxiv.org/abs/1901.11390). Our implementation, executed by Pytorch, is based on the project framework written by Jun-Yan Zhu and Taesung Park, and supported by Tongzhou Wang (https://github.com/baudm/MONet-pytorch). We extracted useful functions from their repository, and implemented in Google Colab. 
+The original design of MONet was conceived by Christopher P. Burgess, Loic Matthey, Nicholas Watters, Rishabh Kabra, Irina Higgins, Matt Botvinick, Alexander Lerchner (the paper can be found here: https://arxiv.org/abs/1901.11390). Our implementation, executed by Pytorch, is based on the project framework written by Jun-Yan Zhu and Taesung Park, and supported by Tongzhou Wang (https://github.com/baudm/MONet-pytorch). We extracted useful functions from their repository, and implemented in Google Colab.
 
 Structure of the Project:
-    
+
 - Model (Module)
 			- Contains 5 classes (UNet, AttentionNet, EncoderNet, DecoderNet, Monet) inherited from torch.nn.Module, we did not make any significant changes to this part.
-	
+
 - Datasets (Module)
-			- This module build a dataset that is similar to the Sprites Dataset in the paper. The dataset consists of images with three different types of objects (squares, circles, or diamonds) with three different colours (red, green, or blue) and random scale and random positions. 
-		
+			- This module build a dataset that is similar to the Sprites Dataset in the paper. The dataset consists of images with three different types of objects (squares, circles, or diamonds) with three different colours (red, green, or blue) and random scale and random positions.
+
 - Visualisation (Module)
-			- We rebuilt the visualisation function to make it able to extract informations from all of the attention masks, while comparing them with the reconstructed images and original images, using the visdom platform. 
-		
+			- We rebuilt the visualisation function to make it able to extract informations from all of the attention masks, while comparing them with the reconstructed images and original images, using the visdom platform.
+
 - Training (Module)
-			- This module contains function that runs the training and testing loop. We rebuilt the function and make it tracing all three components of the loss (reconstruction loss, latent posterior KL divergence, and masks KL divergence). 
-		
+			- This module contains function that runs the training and testing loop. We rebuilt the function and make it tracing all three components of the loss (reconstruction loss, latent posterior KL divergence, and masks KL divergence).
+
 - Config (Module)
 			- Contains hyper parameters of the model and the training process.
 
 
 ## Getting Started
 Run the PSYCH250_Project_MONet.ipynb with Google Colab.
- 
+
 Go to "Runtime" -> "change runtime type" and then select "GPU".
 
 Import required packages:
@@ -81,7 +81,7 @@ time.sleep(3)
 vis.text('MONet Visualization')
 ! cat visdomlog.txt
 ```
-Run the code step-by-step and view the visualization result from the link from the second code block. 
+Run the code step-by-step and view the visualization result from the link from the second code block.
 
 
 ## Test Results
@@ -89,31 +89,32 @@ Run the code step-by-step and view the visualization result from the link from t
 In the figures below, the first rows correspond to the raw image, the 2nd-5th row correspond to the four attention masks respectively, and the last row represent the reconstructed image. Each column corresponds to one sample.
 
 #### Tracing the Learning Trajectory
-There are three stages of the training. In the first stage, the model first learns to distinguish between background and objects, the first attention mask always take care of the background, while the rest three masks failed to do object segmentation and the reconstruction is poor, which is indicated by a large VAE reconstruction loss. 
+There are three stages of the training. In the first stage, the model first learns to distinguish between background and objects, the first attention mask always take care of the background, while the rest three masks failed to do object segmentation and the reconstruction is poor, which is indicated by a large VAE reconstruction loss.
 
 ![Stage_1](imgs/Stage_1.png)
 
-In the second stage, the second attention mask learned to capture one object, while the last attention mask always capture the rest two objects, while the mask in the middle doing nothing. Attention masks are always built up in such an order. The reconstruction is better than in stage 1, (note that as circle and square are captured together in the last mask, the reconstruction image has color a combination of red and green). 
+In the second stage, the second attention mask learned to capture one object, while the last attention mask always capture the rest two objects, while the mask in the middle doing nothing. Attention masks are always built up in such an order. The reconstruction is better than in stage 1, (note that as circle and square are captured together in the last mask, the reconstruction image has color a combination of red and green).
 
 ![Stage_2](imgs/Stage_2.png)
 
-In the third stage, each mask learns to capture only one object, which display great object segmentation result. The reconstruction is perfect with colors and shapes matching the raw input. 
+In the third stage, each mask learns to capture only one object, which display great object segmentation result. The reconstruction is perfect with colors and shapes matching the raw input.
 
 ![Stage_3](imgs/Stage_3.png)
 
 #### Occlusion
 Below are two examples of raw images with occlusion. Occlusion does not affect the reconstruction performance with the model always allocates the overlapped part to one of the object. However, on our dataset, we did not observed what is proclaimed by the paper as "the unmasked reconstruction components of occluded objects showed
-very coherent filling in of occluded regions". This might because our dataset is 2D while the dataset used by them (CLEVR) is 3D. 
+very coherent filling in of occluded regions". This might because our dataset is 2D while the dataset used by them (CLEVR) is 3D.
+
 ![Occlusion_1](imgs/Occlusion_1.png)
 
 ![Occlusion_2](imgs/Occlusion_2.png)
 
 #### Visual Number Sense
-The test the trained model on dataset with various number of objects. As shown by the two figure below, the model generalizes well to different number of objects. 
-We also observe that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image. 
+The test the trained model on dataset with various number of objects. As shown by the two figure below, the model generalizes well to different number of objects.
+We also observe that the activation of a certain attention mask can be a good indicator of whether a certain type of object exists in the image.
 The aggregate number of activated masks can then be used to predict the number of objects within the image.
 However, in our experiment, this visual number sense is only based on color information, rather than more complicated features like shape and texture,
-regions with the same color are always clustered as one single object even if they are spatially separated. One potential way to add spatial feature to 
+regions with the same color are always clustered as one single object even if they are spatially separated. One potential way to add spatial feature to
 the segmentation is by adding a spatial prior to the attention mask which encourages the grouping of adjacent pixels.
 
 ![Number_1](imgs/Number_1.png)
